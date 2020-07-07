@@ -10,20 +10,36 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.huawei.hms.support.hwid.HuaweiIdAuthManager
+import com.huawei.hms.support.hwid.request.HuaweiIdAuthParams
+import com.huawei.hms.support.hwid.request.HuaweiIdAuthParamsHelper
+import com.sandoval.simplesmilecamera.auth.AuthActivity
 import com.sandoval.simplesmilecamera.face.LiveFaceAnalyseActivity
+import com.sandoval.simplesmilecamera.push.GetTokenAction
 import com.sandoval.simplesmilecamera.utils.Constant
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        val displayName = intent.getStringExtra("displayName")
+        if (displayName!!.isNotEmpty()) {
+            displayNameText.text = displayName
+        } else {
+            Log.d("DisplayName: ", "Username")
+        }
         if (!allPermissionsGranted()) {
             runtimePermissions
+        }
+        logoutBtn.setOnClickListener {
+            logoutHuaweiId()
         }
     }
 
@@ -35,7 +51,7 @@ class MainActivity : AppCompatActivity() {
                     allNeededPermissions.add(permission)
                 }
             }
-            if (!allNeededPermissions.isEmpty()) {
+            if (allNeededPermissions.isNotEmpty()) {
                 ActivityCompat.requestPermissions(
                     this,
                     allNeededPermissions.toTypedArray(),
@@ -58,7 +74,7 @@ class MainActivity : AppCompatActivity() {
             val info = this.packageManager
                 .getPackageInfo(this.packageName, PackageManager.GET_PERMISSIONS)
             val ps = info.requestedPermissions
-            if (ps != null && ps.size > 0) {
+            if (ps != null && ps.isNotEmpty()) {
                 ps
             } else {
                 arrayOfNulls(0)
@@ -94,7 +110,7 @@ class MainActivity : AppCompatActivity() {
                 .setMessage(getString(R.string.camera_permission_rationale))
                 .setPositiveButton(
                     getString(R.string.settings)
-                ) { dialog, which ->
+                ) { _, _ ->
                     val intent =
                         Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                     intent.data = Uri.parse("package:$packageName")
@@ -102,8 +118,8 @@ class MainActivity : AppCompatActivity() {
                     startActivity(intent)
                 }
                 .setNegativeButton(
-                    getString(R.string.cancel),
-                    DialogInterface.OnClickListener { dialog, which -> finish() }).create()
+                    getString(R.string.cancel)
+                ) { _, _ -> finish() }.create()
             dialog.show()
         }
     }
@@ -136,5 +152,23 @@ class MainActivity : AppCompatActivity() {
             Log.i(TAG, "Permission NOT granted: $permission")
             return false
         }
+    }
+
+    private fun logoutHuaweiId() {
+        val mAuthParam = HuaweiIdAuthParamsHelper(HuaweiIdAuthParams.DEFAULT_AUTH_REQUEST_PARAM)
+            .createParams()
+        val mAuthManager = HuaweiIdAuthManager.getService(this, mAuthParam)
+        val logoutTask = mAuthManager.signOut()
+        logoutTask.addOnSuccessListener {
+            startActivity(Intent(this@MainActivity, AuthActivity::class.java))
+            finish()
+        }
+        logoutTask.addOnFailureListener {
+            Toast.makeText(this@MainActivity, "Logout Failed!", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    override fun onBackPressed() {
+        //no haga nada
     }
 }

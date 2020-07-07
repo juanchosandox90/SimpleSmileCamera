@@ -9,4 +9,6 @@
         demo the API.</string>
     <string name="settings">Settings</string>
     <string name="cancel">Cancel</string>
+    <string name="auth_app_title">Bienvenido a HSelfie Cam</string>
+    <string name="desc_app">Para ingresar a tu selfie cam, por favor ingresa con tu Huawei ID. Te tomara menos de 1 minuto ingresar a probar esta maravillosa aplicación</string>
 </resources>

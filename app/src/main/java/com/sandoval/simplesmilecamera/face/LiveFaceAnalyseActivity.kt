@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -38,6 +37,7 @@ import java.io.IOException
 
 
 class LiveFaceAnalyseActivity : AppCompatActivity(), View.OnClickListener {
+
     private val CAMERA_REQUEST_CODE = 101
     private var analyzer: MLFaceAnalyzer? = null
     private var mLensEngine: LensEngine? = null
@@ -51,6 +51,7 @@ class LiveFaceAnalyseActivity : AppCompatActivity(), View.OnClickListener {
     private val storePath = "/storage/emulated/0/DCIM/Camera"
     private var restart: Button? = null
     private var detectMode = 0
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.setContentView(R.layout.activity_live_face_analyse)
@@ -326,7 +327,8 @@ class LiveFaceAnalyseActivity : AppCompatActivity(), View.OnClickListener {
         } catch (e: IOException) {
             e.printStackTrace()
         }
-        return file.getAbsolutePath()
+        Log.d("absoluteFilePath: ", file.absolutePath)
+        return file.absolutePath
     }
 
     companion object {

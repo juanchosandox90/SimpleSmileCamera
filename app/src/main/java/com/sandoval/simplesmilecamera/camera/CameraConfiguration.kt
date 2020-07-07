@@ -1,9 +1,8 @@
 package com.sandoval.simplesmilecamera.camera
 
 
-class CameraConfiguration {
+open class CameraConfiguration {
     var fps = 20.0f
-    var previewWidth = MAX_WIDTH
     var previewHeight = MAX_HEIGHT
     val isAutoFocus = true
 

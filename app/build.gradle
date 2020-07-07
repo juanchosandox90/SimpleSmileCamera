@@ -52,6 +52,9 @@ dependencies {
     implementation 'com.huawei.hms:ml-computer-vision-face-shape-point-model:1.0.4.300'
     implementation 'com.huawei.hms:ml-computer-vision-face:1.0.4.300'
 
+    implementation 'com.huawei.hms:hwid:4.0.4.300'
+    implementation 'com.huawei.hms:push:4.0.3.301'
+
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'

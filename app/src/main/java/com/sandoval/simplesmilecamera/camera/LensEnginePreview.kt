@@ -1,15 +1,12 @@
 package com.sandoval.simplesmilecamera.camera
 
 import android.content.Context
-import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.util.AttributeSet
 import android.util.Log
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.huawei.hms.common.size.Size
 import com.huawei.hms.mlsdk.common.LensEngine
 import com.sandoval.simplesmilecamera.overlay.GraphicOverlay
@@ -18,7 +15,7 @@ import java.io.IOException
 
 class LensEnginePreview(context: Context, attrs: AttributeSet?) :
     ViewGroup(context, attrs) {
-    private val mContext: Context
+    private val mContext: Context = context
     private val mSurfaceView: SurfaceView
     private var mStartRequested: Boolean
     private var mSurfaceAvailable: Boolean
@@ -62,10 +59,10 @@ class LensEnginePreview(context: Context, attrs: AttributeSet?) :
             mLensEngine!!.run(mSurfaceView.holder)
             if (mOverlay != null) {
                 val size: Size = mLensEngine!!.displayDimension
-                val min: Int = Math.min(size.getWidth(), size.getHeight())
-                val max: Int = Math.max(size.getWidth(), size.getHeight())
-                if (mContext.getResources()
-                        .getConfiguration().orientation === Configuration.ORIENTATION_PORTRAIT
+                val min: Int = size.width.coerceAtMost(size.height)
+                val max: Int = size.width.coerceAtLeast(size.height)
+                if (Configuration.ORIENTATION_PORTRAIT == mContext.resources
+                        .configuration.orientation
                 ) {
                     // Swap width and height sizes when in portrait, since it will be rotated by
                     // 90 degrees
@@ -114,14 +111,14 @@ class LensEnginePreview(context: Context, attrs: AttributeSet?) :
         if (mLensEngine != null) {
             val size: Size? = mLensEngine!!.displayDimension
             if (size != null) {
-                previewWidth = size.getWidth()
-                previewHeight = size.getHeight()
+                previewWidth = size.width
+                previewHeight = size.height
             }
         }
 
         // Swap width and height sizes when in portrait, since it will be rotated 90 degrees
-        if (mContext.getResources()
-                .getConfiguration().orientation === Configuration.ORIENTATION_PORTRAIT
+        if (mContext.resources
+                .configuration.orientation == Configuration.ORIENTATION_PORTRAIT
         ) {
             val tmp = previewWidth
             previewWidth = previewHeight
@@ -169,7 +166,6 @@ class LensEnginePreview(context: Context, attrs: AttributeSet?) :
     }
 
     init {
-        mContext = context
         mStartRequested = false
         mSurfaceAvailable = false
         mSurfaceView = SurfaceView(context)
